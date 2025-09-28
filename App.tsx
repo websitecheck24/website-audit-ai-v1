@@ -42,10 +42,20 @@ const App: React.FC = () => {
       setAnalysis(data);
     } catch (err) {
       if (err instanceof Error) {
-        if (err.message.toLowerCase().includes('quota')) {
+        const errorMessage = err.message.toLowerCase();
+        if (errorMessage.includes('quota')) {
           setError(t('error_quota_exceeded'));
+        } else if (errorMessage.includes('network error') || errorMessage.includes('failed to fetch')) {
+          setError(t('error_network'));
+        } else if (errorMessage.includes('unreachable') || errorMessage.includes('dns_failure')) {
+          setError(t('error_unreachable'));
+        } else if (errorMessage.includes('invalid value') || errorMessage.includes('invalid url')) {
+          setError(t('error_invalid_url'));
         } else {
+          // Fallback for other API errors
           setError(t('error_message'));
+          // Log the specific error for debugging
+          console.error('Unhandled API Error:', err.message);
         }
       } else {
         setError(t('error_unknown'));

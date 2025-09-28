@@ -15,10 +15,13 @@ export const translations: TranslationData = {
     // Loader
     loader_text: 'Auditing your site... this may take a moment.',
     // Errors
-    error_message: 'Failed to analyze the website. The URL may be invalid, unreachable, or the service is temporarily down. Please check the URL and try again.',
+    error_message: 'Failed to analyze the website. The service may be temporarily down. Please try again later.',
     error_unknown: 'An unknown error occurred.',
     error_title: 'Analysis Failed',
     error_quota_exceeded: 'API query quota exceeded. Please provide your own API key to continue analyzing websites.',
+    error_network: 'Could not connect to the analysis service. Please check your internet connection and try again.',
+    error_unreachable: 'The provided URL could not be reached. Please check that the domain is correct and the website is online.',
+    error_invalid_url: 'The URL format is invalid. Please enter a valid URL (e.g., example.com).',
     // API Key Modal
     api_key_modal_title: 'Set Google PageSpeed API Key',
     api_key_placeholder: 'Enter your API Key here',
@@ -81,10 +84,13 @@ export const translations: TranslationData = {
     // Loader
     loader_text: 'Ihre Seite wird geprüft... dies kann einen Moment dauern.',
     // Errors
-    error_message: 'Die Website konnte nicht analysiert werden. Die URL ist möglicherweise ungültig, nicht erreichbar oder der Dienst ist vorübergehend nicht verfügbar. Bitte überprüfen Sie die URL und versuchen Sie es erneut.',
+    error_message: 'Die Website konnte nicht analysiert werden. Der Dienst ist möglicherweise vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.',
     error_unknown: 'Ein unbekannter Fehler ist aufgetreten.',
     error_title: 'Analyse fehlgeschlagen',
     error_quota_exceeded: 'API-Abfragekontingent überschritten. Bitte geben Sie Ihren eigenen API-Schlüssel an, um die Analyse von Websites fortzusetzen.',
+    error_network: 'Verbindung zum Analysedienst konnte nicht hergestellt werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
+    error_unreachable: 'Die angegebene URL konnte nicht erreicht werden. Bitte überprüfen Sie, ob die Domain korrekt und die Website online ist.',
+    error_invalid_url: 'Das URL-Format ist ungültig. Bitte geben Sie eine gültige URL ein (z.B. example.com).',
     // API Key Modal
     api_key_modal_title: 'Google PageSpeed API-Schlüssel festlegen',
     api_key_placeholder: 'Geben Sie hier Ihren API-Schlüssel ein',
