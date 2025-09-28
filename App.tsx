@@ -19,6 +19,7 @@ const App: React.FC = () => {
   const [apiKey, setApiKey] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [apiKeyModalReason, setApiKeyModalReason] = useState<ApiKeyModalReason>('user');
+  const [urlToRetry, setUrlToRetry] = useState<string | null>(null);
   
   const { t } = useTranslations(language);
   const dashboardRef = useRef<HTMLDivElement>(null);
@@ -49,6 +50,7 @@ const App: React.FC = () => {
         if (errorMessage.includes('quota')) {
           setError(t('error_quota_exceeded'));
           setApiKeyModalReason('quota');
+          setUrlToRetry(fullUrl); // Store the URL that failed
           setIsModalOpen(true);
         } else if (errorMessage.includes('api key not valid') || errorMessage.includes('invalid key')) {
           setError(t('error_invalid_api_key'));
@@ -80,6 +82,17 @@ const App: React.FC = () => {
     setApiKey(trimmedKey);
     localStorage.setItem('SITE_AUDIT_API_KEY', trimmedKey);
     setIsModalOpen(false);
+
+    // Automatically retry the analysis if it failed due to a quota issue
+    if (apiKeyModalReason === 'quota' && urlToRetry) {
+      handleAnalyze(urlToRetry);
+      setUrlToRetry(null); // Clear the retry URL
+    }
+  };
+  
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setUrlToRetry(null); // Clear retry URL on any close action
   };
 
   const openApiKeyModal = (reason: ApiKeyModalReason) => {
@@ -132,7 +145,7 @@ const App: React.FC = () => {
       {isModalOpen && (
         <ApiKeyModal 
           t={t}
-          onClose={() => setIsModalOpen(false)}
+          onClose={handleCloseModal}
           onSave={handleSaveApiKey}
           currentKey={apiKey}
           reason={apiKeyModalReason}

@@ -39,6 +39,7 @@ export const translations: TranslationData = {
     // Dashboard
     dashboard_title: 'Audit Report for',
     download_pdf: 'Download PDF',
+    generating_pdf: 'Generating PDF...',
     overall_scores: 'Overall Scores',
     performance: 'Performance',
     accessibility: 'Accessibility',
@@ -124,6 +125,7 @@ export const translations: TranslationData = {
     // Dashboard
     dashboard_title: 'Prüfbericht für',
     download_pdf: 'PDF herunterladen',
+    generating_pdf: 'PDF wird erstellt...',
     overall_scores: 'Gesamtbewertungen',
     performance: 'Leistung',
     accessibility: 'Barrierefreiheit',
