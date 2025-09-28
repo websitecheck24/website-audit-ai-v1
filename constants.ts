@@ -1,4 +1,3 @@
-
 import type { TranslationData } from './types';
 
 export const translations: TranslationData = {
@@ -6,6 +5,7 @@ export const translations: TranslationData = {
     // Header & Footer
     language_switcher: 'DE',
     footer_text: 'Built for modern web analysis.',
+    set_api_key: 'Set API Key',
     // Main page
     main_headline: 'Instant Website Health Audit',
     main_subheadline: 'Enter your URL to receive a comprehensive performance, SEO, and accessibility report in seconds. Free and easy.',
@@ -18,6 +18,12 @@ export const translations: TranslationData = {
     error_message: 'Failed to analyze the website. The URL may be invalid, unreachable, or the service is temporarily down. Please check the URL and try again.',
     error_unknown: 'An unknown error occurred.',
     error_title: 'Analysis Failed',
+    error_quota_exceeded: 'API query quota exceeded. Please provide your own API key to continue analyzing websites.',
+    // API Key Modal
+    api_key_modal_title: 'Set Google PageSpeed API Key',
+    api_key_placeholder: 'Enter your API Key here',
+    api_key_save: 'Save Key',
+    api_key_description: "To avoid public quota limits, you can use your own Google PageSpeed Insights API key. Your key is saved securely in your browser's local storage.",
     // Dashboard
     dashboard_title: 'Audit Report for',
     download_pdf: 'Download PDF',
@@ -65,6 +71,7 @@ export const translations: TranslationData = {
     // Header & Footer
     language_switcher: 'EN',
     footer_text: 'Gebaut für moderne Web-Analyse.',
+    set_api_key: 'API-Schlüssel festlegen',
     // Main page
     main_headline: 'Sofortige Website-Zustandsprüfung',
     main_subheadline: 'Geben Sie Ihre URL ein, um in Sekunden einen umfassenden Bericht zu Leistung, SEO und Barrierefreiheit zu erhalten. Kostenlos und einfach.',
@@ -77,6 +84,12 @@ export const translations: TranslationData = {
     error_message: 'Die Website konnte nicht analysiert werden. Die URL ist möglicherweise ungültig, nicht erreichbar oder der Dienst ist vorübergehend nicht verfügbar. Bitte überprüfen Sie die URL und versuchen Sie es erneut.',
     error_unknown: 'Ein unbekannter Fehler ist aufgetreten.',
     error_title: 'Analyse fehlgeschlagen',
+    error_quota_exceeded: 'API-Abfragekontingent überschritten. Bitte geben Sie Ihren eigenen API-Schlüssel an, um die Analyse von Websites fortzusetzen.',
+    // API Key Modal
+    api_key_modal_title: 'Google PageSpeed API-Schlüssel festlegen',
+    api_key_placeholder: 'Geben Sie hier Ihren API-Schlüssel ein',
+    api_key_save: 'Schlüssel speichern',
+    api_key_description: "Um öffentliche Kontingentlimits zu vermeiden, können Sie Ihren eigenen Google PageSpeed Insights API-Schlüssel verwenden. Ihr Schlüssel wird sicher im lokalen Speicher Ihres Browsers gespeichert.",
     // Dashboard
     dashboard_title: 'Prüfbericht für',
     download_pdf: 'PDF herunterladen',

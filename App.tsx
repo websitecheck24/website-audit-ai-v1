@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Header } from './components/Header';
 import { UrlInputForm } from './components/UrlInputForm';
 import { Loader } from './components/Loader';
@@ -7,32 +7,46 @@ import { analyzeWebsite } from './services/pagespeedService';
 import { PageSpeedAnalysis } from './types';
 import { useTranslations } from './hooks/useTranslations';
 import type { Language } from './types';
+import { ApiKeyModal } from './components/ApiKeyModal';
 
 const App: React.FC = () => {
   const [analysis, setAnalysis] = useState<PageSpeedAnalysis | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [language, setLanguage] = useState<Language>('en');
+  const [apiKey, setApiKey] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  
   const { t } = useTranslations(language);
   const dashboardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const storedKey = localStorage.getItem('SITE_AUDIT_API_KEY');
+    if (storedKey) {
+      setApiKey(storedKey);
+    }
+  }, []);
 
   const handleAnalyze = useCallback(async (url: string) => {
     setIsLoading(true);
     setError(null);
     setAnalysis(null);
 
-    // Add https:// if missing
     let fullUrl = url;
     if (!/^https?:\/\//i.test(url)) {
       fullUrl = `https://${url}`;
     }
 
     try {
-      const data = await analyzeWebsite(fullUrl);
+      const data = await analyzeWebsite(fullUrl, apiKey);
       setAnalysis(data);
     } catch (err) {
       if (err instanceof Error) {
-        setError(t('error_message'));
+        if (err.message.toLowerCase().includes('quota')) {
+          setError(t('error_quota_exceeded'));
+        } else {
+          setError(t('error_message'));
+        }
       } else {
         setError(t('error_unknown'));
       }
@@ -40,11 +54,24 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [t]);
+  }, [t, apiKey]);
+
+  const handleSaveApiKey = (key: string) => {
+    const trimmedKey = key.trim();
+    setApiKey(trimmedKey);
+    localStorage.setItem('SITE_AUDIT_API_KEY', trimmedKey);
+    setIsModalOpen(false);
+  };
+
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
-      <Header language={language} setLanguage={setLanguage} t={t} />
+      <Header 
+        language={language} 
+        setLanguage={setLanguage} 
+        t={t}
+        onOpenApiKeyModal={() => setIsModalOpen(true)} 
+      />
       
       <main className="container mx-auto px-4 py-8 md:py-16">
         <div className="text-center max-w-3xl mx-auto">
@@ -77,6 +104,15 @@ const App: React.FC = () => {
       <footer className="text-center py-8 text-gray-500">
         <p>Site Audit Pro. {t('footer_text')}</p>
       </footer>
+
+      {isModalOpen && (
+        <ApiKeyModal 
+          t={t}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSaveApiKey}
+          currentKey={apiKey}
+        />
+      )}
     </div>
   );
 };

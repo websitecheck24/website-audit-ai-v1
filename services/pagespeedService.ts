@@ -1,11 +1,14 @@
-
 import type { PageSpeedAnalysis } from '../types';
 
 const API_ENDPOINT = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
 
-export const analyzeWebsite = async (url: string): Promise<PageSpeedAnalysis> => {
+export const analyzeWebsite = async (url: string, apiKey?: string): Promise<PageSpeedAnalysis> => {
   // Use the mobile strategy for analysis
-  const queryUrl = `${API_ENDPOINT}?url=${encodeURIComponent(url)}&strategy=mobile`;
+  let queryUrl = `${API_ENDPOINT}?url=${encodeURIComponent(url)}&strategy=mobile`;
+
+  if (apiKey) {
+    queryUrl += `&key=${apiKey}`;
+  }
   
   const response = await fetch(queryUrl);
   
