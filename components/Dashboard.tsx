@@ -3,18 +3,13 @@ import type { PageSpeedAnalysis } from '../types';
 import { ScoreGauge } from './ScoreGauge';
 import { MetricCard } from './MetricCard';
 import { generatePdf } from '../utils/pdfGenerator';
+import { OpportunityCard } from './OpportunityCard';
 
 interface DashboardProps {
   data: PageSpeedAnalysis;
   t: (key: string) => string;
   url: string;
 }
-
-const getScoreColor = (score: number) => {
-  if (score >= 90) return 'text-green-400';
-  if (score >= 50) return 'text-yellow-400';
-  return 'text-red-400';
-};
 
 const formatBytes = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -26,17 +21,20 @@ const formatBytes = (bytes: number) => {
 
 export const Dashboard: React.FC<DashboardProps> = ({ data, t, url }) => {
   const { lighthouseResult } = data;
-  const categories = lighthouseResult.categories;
-  const audits = lighthouseResult.audits;
+  const { categories, audits } = lighthouseResult;
 
-  const performanceScore = Math.round(categories.performance.score * 100);
-  const accessibilityScore = Math.round(categories.accessibility.score * 100);
-  const bestPracticesScore = Math.round(categories['best-practices'].score * 100);
-  const seoScore = Math.round(categories.seo.score * 100);
+  const performanceScore = Math.round((categories.performance?.score ?? 0) * 100);
+  const accessibilityScore = Math.round((categories.accessibility?.score ?? 0) * 100);
+  const bestPracticesScore = Math.round((categories['best-practices']?.score ?? 0) * 100);
+  const seoScore = Math.round((categories.seo?.score ?? 0) * 100);
   
-  const totalByteSize = audits.diagnostics?.details.items[0]?.totalByteSize ?? 0;
-  const totalRequests = audits.diagnostics?.details.items[0]?.requestCount ?? 0;
-  const jsExecutionTime = audits['mainthread-work-breakdown']?.details.items.find(i => i.group === 'scripting')?.duration ?? 0;
+  const totalByteSize = audits['total-byte-weight']?.numericValue ?? 0;
+  const totalRequests = audits['network-requests']?.details?.items?.length ?? 0;
+  const jsExecutionTime = audits['mainthread-work-breakdown']?.details?.items.find(i => i.group === 'scripting')?.duration ?? 0;
+
+  const opportunities = Object.values(audits)
+    .filter(audit => audit.details?.type === 'opportunity' && (audit.details.overallSavingsMs ?? 0) > 100)
+    .sort((a, b) => (b.details?.overallSavingsMs ?? 0) - (a.details?.overallSavingsMs ?? 0));
 
   const handleDownload = () => {
     const domain = new URL(url).hostname;
@@ -59,7 +57,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, t, url }) => {
       </div>
 
       {/* Overall Scores */}
-      <div className="mb-8">
+      <div className="mb-12">
         <h3 className="text-xl font-semibold mb-4 text-gray-900">{t('overall_scores')}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           <ScoreGauge title={t('performance')} score={performanceScore} />
@@ -69,29 +67,42 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, t, url }) => {
         </div>
       </div>
 
+      {/* Opportunities */}
+      {opportunities.length > 0 && (
+        <div className="mb-12">
+            <h3 className="text-xl font-semibold mb-2 text-gray-900">{t('opportunities_title')}</h3>
+            <p className="text-gray-600 mb-4">{t('opportunities_desc')}</p>
+            <div className="space-y-4">
+                {opportunities.map(audit => (
+                    <OpportunityCard key={audit.id} audit={audit} t={t} />
+                ))}
+            </div>
+        </div>
+      )}
+
       {/* Core Web Vitals */}
-      <div className="mb-8">
+      <div className="mb-12">
         <h3 className="text-xl font-semibold mb-4 text-gray-900">{t('core_web_vitals')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-            <MetricCard title={t('lcp')} value={audits['largest-contentful-paint'].displayValue} description={t('lcp_desc')} />
-            <MetricCard title={t('cls')} value={audits['cumulative-layout-shift'].displayValue} description={t('cls_desc')} />
-            <MetricCard title={t('tti')} value={audits['interactive'].displayValue} description={t('inp_desc')} />
+            <MetricCard title={t('lcp')} value={audits['largest-contentful-paint']?.displayValue ?? 'N/A'} description={t('lcp_desc')} />
+            <MetricCard title={t('cls')} value={audits['cumulative-layout-shift']?.displayValue ?? 'N/A'} description={t('cls_desc')} />
+            <MetricCard title={t('tti')} value={audits['interactive']?.displayValue ?? 'N/A'} description={t('inp_desc')} />
         </div>
       </div>
       
       {/* Key Metrics */}
-      <div className="mb-8">
+      <div className="mb-12">
         <h3 className="text-xl font-semibold mb-4 text-gray-900">{t('key_metrics')}</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            <MetricCard title={t('fcp')} value={audits['first-contentful-paint'].displayValue} description={t('fcp_desc')} />
-            <MetricCard title={t('speed_index')} value={audits['speed-index'].displayValue} description={t('speed_index_desc')} />
-            <MetricCard title={t('tbt')} value={audits['total-blocking-time'].displayValue} description={t('tbt_desc')} />
-            <MetricCard title={t('server_response_time')} value={audits['server-response-time'].displayValue} description={t('server_response_time_desc')} />
-            <MetricCard title={t('https')} value={audits['uses-https'].score === 1 ? t('pass') : t('fail')} description={t('https_desc')} status={audits['uses-https'].score === 1}/>
-            <MetricCard title={t('crawlable')} value={audits['is-crawlable'].score === 1 ? t('pass') : t('fail')} description={t('crawlable_desc')} status={audits['is-crawlable'].score === 1}/>
-            <MetricCard title={t('mobile_friendly')} value={audits['viewport'].score === 1 ? t('pass') : t('fail')} description={t('mobile_friendly_desc')} status={audits['viewport'].score === 1}/>
-            <MetricCard title={t('readable_fonts')} value={audits['font-size'].score === 1 ? t('pass') : t('fail')} description={t('readable_fonts_desc')} status={audits['font-size'].score === 1}/>
-            <MetricCard title={t('image_aspect_ratio')} value={audits['image-aspect-ratio'].score === 1 ? t('pass') : t('fail')} description={t('image_aspect_ratio_desc')} status={audits['image-aspect-ratio'].score === 1}/>
+            <MetricCard title={t('fcp')} value={audits['first-contentful-paint']?.displayValue ?? 'N/A'} description={t('fcp_desc')} />
+            <MetricCard title={t('speed_index')} value={audits['speed-index']?.displayValue ?? 'N/A'} description={t('speed_index_desc')} />
+            <MetricCard title={t('tbt')} value={audits['total-blocking-time']?.displayValue ?? 'N/A'} description={t('tbt_desc')} />
+            <MetricCard title={t('server_response_time')} value={audits['server-response-time']?.displayValue ?? 'N/A'} description={t('server_response_time_desc')} />
+            <MetricCard title={t('https')} value={audits['uses-https']?.score === 1 ? t('pass') : t('fail')} description={t('https_desc')} status={audits['uses-https']?.score === 1}/>
+            <MetricCard title={t('crawlable')} value={audits['is-crawlable']?.score === 1 ? t('pass') : t('fail')} description={t('crawlable_desc')} status={audits['is-crawlable']?.score === 1}/>
+            <MetricCard title={t('mobile_friendly')} value={audits['viewport']?.score === 1 ? t('pass') : t('fail')} description={t('mobile_friendly_desc')} status={audits['viewport']?.score === 1}/>
+            <MetricCard title={t('readable_fonts')} value={audits['font-size']?.score === 1 ? t('pass') : t('fail')} description={t('readable_fonts_desc')} status={audits['font-size']?.score === 1}/>
+            <MetricCard title={t('image_aspect_ratio')} value={audits['image-aspect-ratio']?.score === 1 ? t('pass') : t('fail')} description={t('image_aspect_ratio_desc')} status={audits['image-aspect-ratio']?.score === 1}/>
         </div>
       </div>
 
@@ -101,7 +112,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, t, url }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           <MetricCard title={t('total_page_size')} value={formatBytes(totalByteSize)} />
           <MetricCard title={t('total_requests')} value={totalRequests.toString()} />
-          <MetricCard title={t('js_execution_time')} value={`${jsExecutionTime.toFixed(2)} ms`} />
+          <MetricCard title={t('js_execution_time')} value={`${jsExecutionTime.toFixed(0)} ms`} />
         </div>
       </div>
     </div>

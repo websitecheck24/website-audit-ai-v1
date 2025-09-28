@@ -1,3 +1,17 @@
+export interface AuditResult {
+  id: string;
+  title: string;
+  description: string;
+  score: number | null;
+  displayValue?: string;
+  numericValue?: number;
+  details?: {
+    type: 'opportunity' | 'table' | 'debugdata';
+    items: any[];
+    overallSavingsMs?: number;
+    overallSavingsBytes?: number;
+  };
+}
 
 export interface PageSpeedAnalysis {
   id: string;
@@ -9,20 +23,25 @@ export interface PageSpeedAnalysis {
       seo: { score: number };
     };
     audits: {
-      'first-contentful-paint': { displayValue: string; numericValue: number };
-      'largest-contentful-paint': { displayValue: string; numericValue: number };
-      'speed-index': { displayValue: string; numericValue: number };
-      'cumulative-layout-shift': { displayValue: string; numericValue: number };
-      'interactive': { displayValue: string; numericValue: number };
-      'total-blocking-time': { displayValue: string; numericValue: number };
-      'server-response-time': { displayValue: string; numericValue: number };
-      'uses-https': { score: number, title: string };
-      'is-crawlable': { score: number, title: string };
-      'viewport': { score: number, title: string };
-      'font-size': { score: number, title: string, details?: { items: any[] } };
-      'image-aspect-ratio': { score: number, title: string, details?: { items: any[] } };
-      'mainthread-work-breakdown': { details: { items: { group: string, duration: number }[] } };
-      'diagnostics': { details: { items: { totalByteSize: number, requestCount: number }[] } }
+      // Specific audits for easy access
+      'first-contentful-paint': AuditResult;
+      'largest-contentful-paint': AuditResult;
+      'speed-index': AuditResult;
+      'cumulative-layout-shift': AuditResult;
+      'interactive': AuditResult;
+      'total-blocking-time': AuditResult;
+      'server-response-time': AuditResult;
+      'uses-https': AuditResult;
+      'is-crawlable': AuditResult;
+      'viewport': AuditResult;
+      'font-size': AuditResult;
+      'image-aspect-ratio': AuditResult;
+      'mainthread-work-breakdown': AuditResult;
+      'diagnostics': AuditResult;
+      'total-byte-weight': AuditResult;
+      'network-requests': AuditResult;
+      // Index signature for all other audits
+      [key: string]: AuditResult;
     };
     finalUrl: string;
   };

@@ -22,11 +22,20 @@ export const translations: TranslationData = {
     error_network: 'Could not connect to the analysis service. Please check your internet connection and try again.',
     error_unreachable: 'The provided URL could not be reached. Please check that the domain is correct and the website is online.',
     error_invalid_url: 'The URL format is invalid. Please enter a valid URL (e.g., example.com).',
+    error_invalid_api_key: 'The provided API key is invalid or has restrictions. Please check your key in the Google Cloud Console.',
     // API Key Modal
     api_key_modal_title: 'Set Google PageSpeed API Key',
     api_key_placeholder: 'Enter your API Key here',
     api_key_save: 'Save Key',
     api_key_description: "To avoid public quota limits, you can use your own Google PageSpeed Insights API key. Your key is saved securely in your browser's local storage.",
+    api_key_modal_quota_reason: "You've reached the public query limit. Please add your own API key to continue analyzing sites.",
+    api_key_modal_invalid_key_reason: "The API key you entered is invalid. Please check the key and try again.",
+    api_key_howto_title: 'How to get a FREE API Key',
+    'api_key_howto_step1_part1': 'Go to the',
+    'api_key_howto_step1_link': 'Google Cloud Console',
+    'api_key_howto_step2': 'Enable the "PageSpeed Insights API" for a project.',
+    'api_key_howto_step3': 'Click "+ CREATE CREDENTIALS" and select "API key".',
+    'api_key_howto_step4': 'Copy your new key and paste it in the field above.',
     // Dashboard
     dashboard_title: 'Audit Report for',
     download_pdf: 'Download PDF',
@@ -68,7 +77,14 @@ export const translations: TranslationData = {
     total_requests: 'Total Requests',
     js_execution_time: 'JS Execution Time',
     pass: 'Pass',
-    fail: 'Fail'
+    fail: 'Fail',
+    // Opportunities
+    opportunities_title: 'Opportunities & Fixes',
+    opportunities_desc: "Prioritized list of improvements to enhance your site's performance and user experience.",
+    potential_savings: 'Potential Savings',
+    severity_high: 'High Impact',
+    severity_medium: 'Medium Impact',
+    learn_more: 'Learn more'
   },
   de: {
     // Header & Footer
@@ -91,11 +107,20 @@ export const translations: TranslationData = {
     error_network: 'Verbindung zum Analysedienst konnte nicht hergestellt werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
     error_unreachable: 'Die angegebene URL konnte nicht erreicht werden. Bitte überprüfen Sie, ob die Domain korrekt und die Website online ist.',
     error_invalid_url: 'Das URL-Format ist ungültig. Bitte geben Sie eine gültige URL ein (z.B. example.com).',
+    error_invalid_api_key: 'Der angegebene API-Schlüssel ist ungültig oder hat Einschränkungen. Bitte überprüfen Sie Ihren Schlüssel in der Google Cloud Console.',
     // API Key Modal
     api_key_modal_title: 'Google PageSpeed API-Schlüssel festlegen',
     api_key_placeholder: 'Geben Sie hier Ihren API-Schlüssel ein',
     api_key_save: 'Schlüssel speichern',
     api_key_description: "Um öffentliche Kontingentlimits zu vermeiden, können Sie Ihren eigenen Google PageSpeed Insights API-Schlüssel verwenden. Ihr Schlüssel wird sicher im lokalen Speicher Ihres Browsers gespeichert.",
+    api_key_modal_quota_reason: "Sie haben das öffentliche Abfragelimit erreicht. Bitte fügen Sie Ihren eigenen API-Schlüssel hinzu, um fortzufahren.",
+    api_key_modal_invalid_key_reason: "Der von Ihnen eingegebene API-Schlüssel ist ungültig. Bitte überprüfen Sie den Schlüssel und versuchen Sie es erneut.",
+    'api_key_howto_title': 'So erhalten Sie einen KOSTENLOSEN API-Schlüssel',
+    'api_key_howto_step1_part1': 'Gehen Sie zur',
+    'api_key_howto_step1_link': 'Google Cloud Console',
+    'api_key_howto_step2': 'Aktivieren Sie die "PageSpeed Insights API" für ein Projekt.',
+    'api_key_howto_step3': 'Klicken Sie auf "+ ANMELDEINFORMATIONEN ERSTELLEN" und wählen Sie "API-Schlüssel".',
+    'api_key_howto_step4': 'Kopieren Sie Ihren neuen Schlüssel und fügen Sie ihn in das Feld oben ein.',
     // Dashboard
     dashboard_title: 'Prüfbericht für',
     download_pdf: 'PDF herunterladen',
@@ -137,6 +162,13 @@ export const translations: TranslationData = {
     total_requests: 'Gesamtanfragen',
     js_execution_time: 'JS-Ausführungszeit',
     pass: 'Bestanden',
-    fail: 'Fehlgeschlagen'
+    fail: 'Fehlgeschlagen',
+    // Opportunities
+    opportunities_title: 'Möglichkeiten & Korrekturen',
+    opportunities_desc: 'Priorisierte Liste von Verbesserungen, um die Leistung und Benutzererfahrung Ihrer Website zu verbessern.',
+    potential_savings: 'Mögliche Einsparung',
+    severity_high: 'Hohe Auswirkung',
+    severity_medium: 'Mittlere Auswirkung',
+    learn_more: 'Mehr erfahren'
   }
 };

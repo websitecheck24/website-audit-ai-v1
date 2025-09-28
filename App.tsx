@@ -9,6 +9,8 @@ import { useTranslations } from './hooks/useTranslations';
 import type { Language } from './types';
 import { ApiKeyModal } from './components/ApiKeyModal';
 
+type ApiKeyModalReason = 'user' | 'quota' | 'invalid_key';
+
 const App: React.FC = () => {
   const [analysis, setAnalysis] = useState<PageSpeedAnalysis | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -16,6 +18,7 @@ const App: React.FC = () => {
   const [language, setLanguage] = useState<Language>('en');
   const [apiKey, setApiKey] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [apiKeyModalReason, setApiKeyModalReason] = useState<ApiKeyModalReason>('user');
   
   const { t } = useTranslations(language);
   const dashboardRef = useRef<HTMLDivElement>(null);
@@ -45,6 +48,12 @@ const App: React.FC = () => {
         const errorMessage = err.message.toLowerCase();
         if (errorMessage.includes('quota')) {
           setError(t('error_quota_exceeded'));
+          setApiKeyModalReason('quota');
+          setIsModalOpen(true);
+        } else if (errorMessage.includes('api key not valid') || errorMessage.includes('invalid key')) {
+          setError(t('error_invalid_api_key'));
+          setApiKeyModalReason('invalid_key');
+          setIsModalOpen(true);
         } else if (errorMessage.includes('network error') || errorMessage.includes('failed to fetch')) {
           setError(t('error_network'));
         } else if (errorMessage.includes('unreachable') || errorMessage.includes('dns_failure')) {
@@ -73,6 +82,11 @@ const App: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const openApiKeyModal = (reason: ApiKeyModalReason) => {
+    setApiKeyModalReason(reason);
+    setIsModalOpen(true);
+  };
+
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
@@ -80,7 +94,7 @@ const App: React.FC = () => {
         language={language} 
         setLanguage={setLanguage} 
         t={t}
-        onOpenApiKeyModal={() => setIsModalOpen(true)} 
+        onOpenApiKeyModal={() => openApiKeyModal('user')} 
       />
       
       <main className="container mx-auto px-4 py-8 md:py-16">
@@ -121,6 +135,7 @@ const App: React.FC = () => {
           onClose={() => setIsModalOpen(false)}
           onSave={handleSaveApiKey}
           currentKey={apiKey}
+          reason={apiKeyModalReason}
         />
       )}
     </div>
