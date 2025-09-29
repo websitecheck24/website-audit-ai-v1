@@ -66,8 +66,9 @@ const ensureLibrariesLoaded = async (): Promise<void> => {
       loadLibraryWithFallbacks('jspdf'),
     ]);
   } catch (error) {
-    console.error("Failed to load one or more PDF generation libraries:", error);
-    alert("Sorry, a required library for PDF generation could not be loaded. Please check your network connection or disable any ad-blockers and try again.");
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Failed to load one or more PDF generation libraries:", errorMessage);
+    alert(`Sorry, a required library for PDF generation could not be loaded. This can be caused by a network issue or an ad-blocker.\n\nError details: ${errorMessage}\n\nPlease try again after checking your connection or ad-blocker settings.`);
     // Re-throw to be caught by the calling function
     throw new Error("PDF generation library failed to load.");
   }

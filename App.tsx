@@ -20,6 +20,7 @@ const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [apiKeyModalReason, setApiKeyModalReason] = useState<ApiKeyModalReason>('user');
   const [urlToRetry, setUrlToRetry] = useState<string | null>(null);
+  const isRetryingRef = useRef(false); // Ref to signal intent to retry
   
   const { t } = useTranslations(language);
   const dashboardRef = useRef<HTMLDivElement>(null);
@@ -77,17 +78,29 @@ const App: React.FC = () => {
     }
   }, [t, apiKey]);
 
+  // This effect handles the automatic retry after saving a new API key
+  useEffect(() => {
+    // Check if the ref flag is set and we have a URL to retry
+    if (isRetryingRef.current && urlToRetry) {
+      isRetryingRef.current = false; // Reset the flag immediately
+      handleAnalyze(urlToRetry);
+      setUrlToRetry(null); // Clear the URL to prevent subsequent retries
+    }
+    // This effect runs when apiKey changes, ensuring handleAnalyze has the fresh key.
+  }, [apiKey, urlToRetry, handleAnalyze]);
+
   const handleSaveApiKey = (key: string) => {
     const trimmedKey = key.trim();
-    setApiKey(trimmedKey);
     localStorage.setItem('SITE_AUDIT_API_KEY', trimmedKey);
-    setIsModalOpen(false);
 
-    // Automatically retry the analysis if it failed due to a quota issue
+    // If we're saving a key because of a quota error, set the intent flag
     if (apiKeyModalReason === 'quota' && urlToRetry) {
-      handleAnalyze(urlToRetry);
-      setUrlToRetry(null); // Clear the retry URL
+      isRetryingRef.current = true;
     }
+    
+    // Update the API key, which will trigger the useEffect for retrying
+    setApiKey(trimmedKey);
+    setIsModalOpen(false);
   };
   
   const handleCloseModal = () => {

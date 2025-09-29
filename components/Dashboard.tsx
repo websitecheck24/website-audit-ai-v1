@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { PageSpeedAnalysis } from '../types';
+import type { PageSpeedAnalysis, AuditResult } from '../types';
 import { ScoreGauge } from './ScoreGauge';
 import { MetricCard } from './MetricCard';
 import { generatePdf } from '../utils/pdfGenerator';
@@ -31,11 +31,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, t, url }) => {
   
   const totalByteSize = audits['total-byte-weight']?.numericValue ?? 0;
   const totalRequests = audits['network-requests']?.details?.items?.length ?? 0;
-  const jsExecutionTime = audits['mainthread-work-breakdown']?.details?.items.find(i => i.group === 'scripting')?.duration ?? 0;
+  const jsExecutionTime = audits['mainthread-work-breakdown']?.details?.items.find((i: any) => i.group === 'scripting')?.duration ?? 0;
 
   const opportunities = Object.values(audits)
-    .filter(audit => audit.details?.type === 'opportunity' && (audit.details.overallSavingsMs ?? 0) > 100)
-    .sort((a, b) => (b.details?.overallSavingsMs ?? 0) - (a.details?.overallSavingsMs ?? 0));
+    .filter((audit: AuditResult) => audit.details?.type === 'opportunity' && (audit.details.overallSavingsMs ?? 0) > 100)
+    .sort((a: AuditResult, b: AuditResult) => (b.details?.overallSavingsMs ?? 0) - (a.details?.overallSavingsMs ?? 0));
 
   const handleDownload = async () => {
     setIsGeneratingPdf(true);

@@ -1,12 +1,15 @@
 import type { PageSpeedAnalysis } from '../types';
 
-const API_ENDPOINT = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
+const API_ENDPOINT = 'http://localhost:8080/api/analyze'; // The new backend endpoint
 
 export const analyzeWebsite = async (url: string, apiKey?: string): Promise<PageSpeedAnalysis> => {
-  let queryUrl = `${API_ENDPOINT}?url=${encodeURIComponent(url)}&strategy=mobile`;
+  const params = new URLSearchParams();
+  params.append('url', url);
   if (apiKey) {
-    queryUrl += `&key=${apiKey}`;
+    params.append('apiKey', apiKey);
   }
+
+  const queryUrl = `${API_ENDPOINT}?${params.toString()}`;
 
   let response: Response;
   try {
@@ -21,7 +24,7 @@ export const analyzeWebsite = async (url: string, apiKey?: string): Promise<Page
     let errorMessage = `HTTP error! status: ${response.status}`;
     try {
       const errorData = await response.json();
-      // Use the specific message from the API
+      // Use the specific message from the API (proxied by our backend)
       errorMessage = errorData.error.message || 'Failed to fetch PageSpeed data';
     } catch (e) {
       // Response was not JSON, use the status text
@@ -34,6 +37,7 @@ export const analyzeWebsite = async (url: string, apiKey?: string): Promise<Page
 
   // A successful request might not have lighthouseResult if the URL couldn't be resolved or timed out.
   // The error message from the API is often inside data.error in this case.
+  // This logic remains valid as the backend proxies the Google API response structure.
   if (data.error || !data.lighthouseResult) {
       const apiErrorMessage = data.error?.message || 'Lighthouse analysis could not be completed.';
       // Make the message more user-friendly
